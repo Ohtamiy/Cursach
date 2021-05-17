@@ -6,7 +6,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import classes.Counter;
 import classes.Creator;
+import classes.LabelsToGo;
+import classes.Queue;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -20,30 +23,55 @@ import javax.swing.UIManager;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.SwingConstants;
 
 public class MainGui extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField text_fieldQueueCashbox;
-	private JTextField text_fieldServed;
-	private JTextField text_fieldLost;
-	private JTextField text_fieldQueueBread;
-	private JTextField text_fieldQueueMilk;
-	private JTextField text_fieldQueueMeat;
-	private JTextField text_fieldServedMeat;
-	private JTextField text_fieldServedMilk;
-	private JTextField text_fieldServedBread;
+	
+	public JTextField text_fieldQueueCashbox;
+	public JTextField text_fieldServed;
+	public JTextField text_fieldLost;
+	public JTextField text_fieldQueueBread;
+	public JTextField text_fieldQueueMilk;
+	public JTextField text_fieldQueueMeat;
+	public JTextField text_fieldServedMeat;
+	public JTextField text_fieldServedMilk;
+	public JTextField text_fieldServedBread;
 	
 	public boolean end = true;
 	
-	private JLabel labelEnter;
-	private JLabel labelExit;
-	private JSlider sliderArrival;
-	private JSlider sliderMeatChoice;
-	private JSlider sliderMilkChoice;
-	private JSlider sliderBreadChoice;
-	private JButton startBtn;
-	private JButton endBtn;
+	public JLabel labelEnter;
+	public JLabel labelExit;
+	public JSlider sliderArrival;
+	public JSlider sliderMeatChoice;
+	public JSlider sliderMilkChoice;
+	public JSlider sliderBreadChoice;
+	public JButton startBtn;
+	public JButton endBtn;
+	public JSlider sliderVolume;
+	public JLabel labelRoute;
+	public JLabel labelCashbox;
+	public JLabel labelMeat;
+	public JLabel labelMilk;
+	public JLabel labelBread;
+	
+	public Counter cQueueBread;
+	public Counter cQueueMilk;
+	public Counter cQueueMeat;
+	public Counter cQueueCashbox;
+	
+	public Queue queueBread;
+	public Queue queueMilk;
+	public Queue queueMeat;
+	public Queue queueCashbox;
+	
+	public LabelsToGo lLabelEnter;
+	public LabelsToGo lLabelExit;
+	public LabelsToGo lLabelRoute;
+	//public LabelsToGo lLabelBread;
+	
+	public Thread threadCreator;
 
 	/**
 	 * Launch the application.
@@ -84,7 +112,7 @@ public class MainGui extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel labelCashbox = new JLabel("Cashbox----------------------------------");
+		labelCashbox = new JLabel("Cashbox----------------------------------");
 		labelCashbox.setBounds(96, 109, 188, 89);
 		contentPane.add(labelCashbox);
 		
@@ -108,6 +136,8 @@ public class MainGui extends JFrame {
 		contentPane.add(lblNewLabel_1);
 		
 		text_fieldLost = new JTextField();
+		text_fieldLost.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldLost.setText("0");
 		text_fieldLost.setColumns(10);
 		text_fieldLost.setBounds(10, 217, 76, 20);
 		contentPane.add(text_fieldLost);
@@ -122,6 +152,7 @@ public class MainGui extends JFrame {
 		
 		endBtn = new JButton("End");
 		endBtn.setBounds(126, 45, 89, 23);
+		endBtn.setEnabled(false);
 		contentPane.add(endBtn);
 		
 		sliderArrival = new JSlider();
@@ -148,15 +179,15 @@ public class MainGui extends JFrame {
 		labelEnter.setBounds(10, 406, 116, 89);
 		contentPane.add(labelEnter);
 		
-		JLabel labelMeat = new JLabel("Meat-----------------------");
+		labelMeat = new JLabel("Meat-----------------------");
 		labelMeat.setBounds(512, 127, 116, 71);
 		contentPane.add(labelMeat);
 		
-		JLabel labelMilk = new JLabel("\u041C\u043E\u043B\u043E\u043A\u043E-------------------");
+		labelMilk = new JLabel("\u041C\u043E\u043B\u043E\u043A\u043E-------------------");
 		labelMilk.setBounds(613, 280, 116, 71);
 		contentPane.add(labelMilk);
 		
-		JLabel labelBread = new JLabel("\u0425\u043B\u0456\u0431-----------------------");
+		labelBread = new JLabel("\u0425\u043B\u0456\u0431-----------------------");
 		labelBread.setBounds(410, 378, 116, 71);
 		contentPane.add(labelBread);
 		
@@ -262,6 +293,26 @@ public class MainGui extends JFrame {
 		lblNewLabel_1_2_1_1.setBounds(343, 475, 63, 14);
 		contentPane.add(lblNewLabel_1_2_1_1);
 		
+		sliderVolume = new JSlider();
+		sliderVolume.setValue(3);
+		sliderVolume.setToolTipText("");
+		sliderVolume.setPaintTicks(true);
+		sliderVolume.setPaintLabels(true);
+		sliderVolume.setMinorTickSpacing(1);
+		sliderVolume.setMinimum(1);
+		sliderVolume.setMaximum(10);
+		sliderVolume.setMajorTickSpacing(1);
+		sliderVolume.setBounds(499, 45, 200, 45);
+		contentPane.add(sliderVolume);
+		
+		JLabel lblNewLabel_2_1_1 = new JLabel("\u0413\u0443\u0447\u043D\u0456\u0441\u0442\u044C");
+		lblNewLabel_2_1_1.setBounds(579, 20, 57, 14);
+		contentPane.add(lblNewLabel_2_1_1);
+		
+		labelRoute = new JLabel("Route----------------");
+		labelRoute.setBounds(249, 280, 100, 71);
+		contentPane.add(labelRoute);
+		
 		menuAbout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				About about = new About();
@@ -272,15 +323,36 @@ public class MainGui extends JFrame {
 		startBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				startend();
+				
+				cQueueBread = new Counter(text_fieldQueueBread);
+				cQueueMilk = new Counter(text_fieldQueueMilk);
+				cQueueMeat = new Counter(text_fieldQueueMeat);
+				cQueueCashbox = new Counter(text_fieldQueueCashbox);
+				
+				queueBread = new Queue(text_fieldQueueBread);
+				queueMilk= new Queue(text_fieldQueueMilk);
+				queueMeat = new Queue(text_fieldQueueMeat);
+				queueCashbox = new Queue(text_fieldQueueCashbox);
+				
+				lLabelEnter = new LabelsToGo(labelEnter);
+				lLabelExit = new LabelsToGo(labelExit);
+				lLabelRoute = new LabelsToGo(labelRoute);
+				//lLabelBread = new LabelsToGo(labelBread);
+				
 				Creator creator = new Creator(MainGui.this, sliderArrival, labelEnter);
-				Thread thread = new Thread(creator);
-				thread.start();
+				threadCreator = new Thread(creator);
+				threadCreator.start();
 			}
 		});
 		
 		endBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				startend();
+				try {
+					threadCreator.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}

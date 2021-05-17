@@ -63,7 +63,7 @@ public class Creator implements IFromTo,Runnable {
 			int counter = 0;
 			do {
 				// створюємо нового користувача
-				visitor = new Visitor(this.gui, this, 3, choices.get(rnd.nextInt(10)));
+				visitor = new Visitor(this.gui, this, 3, choices.get(rnd.nextInt(13)));
 				// запускаємо його потік
 				(this.thread = new Thread(this.visitor)).start();
 				System.out.println("Visitor#" + counter++ + " created. His choice: " +  visitor.productsToBuy);
