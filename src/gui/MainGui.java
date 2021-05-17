@@ -1,15 +1,16 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import classes.Creator;
+
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 import java.awt.Toolkit;
 import javax.swing.JLabel;
@@ -32,7 +33,17 @@ public class MainGui extends JFrame {
 	private JTextField text_fieldServedMeat;
 	private JTextField text_fieldServedMilk;
 	private JTextField text_fieldServedBread;
-	public boolean end = false;
+	
+	public boolean end = true;
+	
+	private JLabel labelEnter;
+	private JLabel labelExit;
+	private JSlider sliderArrival;
+	private JSlider sliderMeatChoice;
+	private JSlider sliderMilkChoice;
+	private JSlider sliderBreadChoice;
+	private JButton startBtn;
+	private JButton endBtn;
 
 	/**
 	 * Launch the application.
@@ -58,7 +69,7 @@ public class MainGui extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(MainGui.class.getResource("/pictures/\u0430\u0442\u0431.png")));
 		setTitle("Supermarket");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 755, 592);
+		setBounds(100, 100, 754, 592);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -67,12 +78,6 @@ public class MainGui extends JFrame {
 		menuBar.add(menuSettings);
 		
 		JMenuItem menuAbout = new JMenuItem("About");
-		menuAbout.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				About about = new About();
-				about.setVisible(true);
-			}
-		});
 		menuSettings.add(menuAbout);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -111,26 +116,15 @@ public class MainGui extends JFrame {
 		lblNewLabel_1_1.setBounds(20, 203, 63, 14);
 		contentPane.add(lblNewLabel_1_1);
 		
-		JButton startBtn = new JButton("Start");
-		startBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				startend();
-				
-			}
-		});
+		startBtn = new JButton("Start");
 		startBtn.setBounds(126, 11, 89, 23);
 		contentPane.add(startBtn);
 		
-		JButton endBtn = new JButton("End");
-		endBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				startend();
-			}
-		});
+		endBtn = new JButton("End");
 		endBtn.setBounds(126, 45, 89, 23);
 		contentPane.add(endBtn);
 		
-		JSlider sliderArrival = new JSlider();
+		sliderArrival = new JSlider();
 		sliderArrival.setMajorTickSpacing(1);
 		sliderArrival.setPaintLabels(true);
 		sliderArrival.setValue(3);
@@ -146,11 +140,11 @@ public class MainGui extends JFrame {
 		lblNewLabel_2_1.setBounds(290, 20, 116, 14);
 		contentPane.add(lblNewLabel_2_1);
 		
-		JLabel labelExit = new JLabel("\u0412\u0438\u0445\u0456\u0434--------------------");
+		labelExit = new JLabel("\u0412\u0438\u0445\u0456\u0434--------------------");
 		labelExit.setBounds(10, 280, 116, 89);
 		contentPane.add(labelExit);
 		
-		JLabel labelEnter = new JLabel("\u0412\u0445\u0456\u0434---------------------");
+		labelEnter = new JLabel("\u0412\u0445\u0456\u0434---------------------");
 		labelEnter.setBounds(10, 406, 116, 89);
 		contentPane.add(labelEnter);
 		
@@ -166,7 +160,7 @@ public class MainGui extends JFrame {
 		labelBread.setBounds(410, 378, 116, 71);
 		contentPane.add(labelBread);
 		
-		JSlider sliderMeatChoice = new JSlider();
+		sliderMeatChoice = new JSlider();
 		sliderMeatChoice.setValue(3);
 		sliderMeatChoice.setToolTipText("");
 		sliderMeatChoice.setPaintTicks(true);
@@ -182,7 +176,7 @@ public class MainGui extends JFrame {
 		lblNewLabel_2_1_2.setBounds(522, 203, 100, 14);
 		contentPane.add(lblNewLabel_2_1_2);
 		
-		JSlider sliderMilkChoice = new JSlider();
+		sliderMilkChoice = new JSlider();
 		sliderMilkChoice.setValue(3);
 		sliderMilkChoice.setToolTipText("");
 		sliderMilkChoice.setPaintTicks(true);
@@ -198,7 +192,7 @@ public class MainGui extends JFrame {
 		lblNewLabel_2_1_2_1.setBounds(623, 362, 100, 14);
 		contentPane.add(lblNewLabel_2_1_2_1);
 		
-		JSlider sliderBreadChoice = new JSlider();
+		sliderBreadChoice = new JSlider();
 		sliderBreadChoice.setValue(3);
 		sliderBreadChoice.setToolTipText("");
 		sliderBreadChoice.setPaintTicks(true);
@@ -267,16 +261,39 @@ public class MainGui extends JFrame {
 		JLabel lblNewLabel_1_2_1_1 = new JLabel("\u041E\u0431\u0441\u043B\u0443\u0436\u0435\u043D\u043E");
 		lblNewLabel_1_2_1_1.setBounds(343, 475, 63, 14);
 		contentPane.add(lblNewLabel_1_2_1_1);
+		
+		menuAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				About about = new About();
+				about.setVisible(true);
+			}
+		});
+		
+		startBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				startend();
+				Creator creator = new Creator(MainGui.this, sliderArrival, labelEnter);
+				Thread thread = new Thread(creator);
+				thread.start();
+			}
+		});
+		
+		endBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				startend();
+			}
+		});
 	}
 	
 	public void startend() {
 		end = !end;
+		startBtn.setEnabled(end);
+		endBtn.setEnabled(!end);
 	}
 
 	// програвання музики
 	public boolean isPlaying() {
-		
-		
+
 		return false;
 	}
 }

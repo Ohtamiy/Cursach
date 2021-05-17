@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.util.Vector;
 
 import gui.MainGui;
+import service.IFromTo;
 
 /* Відвідувач
  * З'являється в випадковий період часу
