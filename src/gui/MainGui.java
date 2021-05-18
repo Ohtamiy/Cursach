@@ -10,6 +10,10 @@ import classes.Counter;
 import classes.Creator;
 import classes.LabelsToGo;
 import classes.Queue;
+import service.Bread;
+import service.Cashbox;
+import service.Meat;
+import service.Milk;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -41,25 +45,32 @@ public class MainGui extends JFrame {
 	
 	public boolean end = true;
 	
-	public JLabel labelEnter;
-	public JLabel labelExit;
 	public JSlider sliderArrival;
 	public JSlider sliderMeatChoice;
 	public JSlider sliderMilkChoice;
 	public JSlider sliderBreadChoice;
+	public JSlider sliderVolume;
+	
 	public JButton startBtn;
 	public JButton endBtn;
-	public JSlider sliderVolume;
+		
 	public JLabel labelRoute;
 	public JLabel labelCashbox;
 	public JLabel labelMeat;
 	public JLabel labelMilk;
 	public JLabel labelBread;
+	public JLabel labelEnter;
+	public JLabel labelExit;
 	
 	public Counter cQueueBread;
 	public Counter cQueueMilk;
 	public Counter cQueueMeat;
 	public Counter cQueueCashbox;
+	
+	public Counter cBreadServed;
+	public Counter cMilkServed;
+	public Counter cMeatServed;
+	public Counter cCashboxServed;
 	
 	public Queue queueBread;
 	public Queue queueMilk;
@@ -72,6 +83,10 @@ public class MainGui extends JFrame {
 	//public LabelsToGo lLabelBread;
 	
 	public Thread threadCreator;
+	public Thread threadBread;
+	public Thread threadMilk;
+	public Thread threadMeat;
+	public Thread threadCashbox;
 
 	/**
 	 * Launch the application.
@@ -117,12 +132,18 @@ public class MainGui extends JFrame {
 		contentPane.add(labelCashbox);
 		
 		text_fieldQueueCashbox = new JTextField();
+		text_fieldQueueCashbox.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldQueueCashbox.setText("0");
+		text_fieldQueueCashbox.setEditable(false);
 		text_fieldQueueCashbox.setToolTipText("");
 		text_fieldQueueCashbox.setBounds(10, 109, 76, 20);
 		contentPane.add(text_fieldQueueCashbox);
 		text_fieldQueueCashbox.setColumns(10);
 		
 		text_fieldServed = new JTextField();
+		text_fieldServed.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldServed.setText("0");
+		text_fieldServed.setEditable(false);
 		text_fieldServed.setBounds(10, 162, 76, 20);
 		contentPane.add(text_fieldServed);
 		text_fieldServed.setColumns(10);
@@ -136,6 +157,7 @@ public class MainGui extends JFrame {
 		contentPane.add(lblNewLabel_1);
 		
 		text_fieldLost = new JTextField();
+		text_fieldLost.setEditable(false);
 		text_fieldLost.setHorizontalAlignment(SwingConstants.CENTER);
 		text_fieldLost.setText("0");
 		text_fieldLost.setColumns(10);
@@ -240,6 +262,9 @@ public class MainGui extends JFrame {
 		contentPane.add(lblNewLabel_2_1_2_1_1);
 		
 		text_fieldQueueBread = new JTextField();
+		text_fieldQueueBread.setText("0");
+		text_fieldQueueBread.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldQueueBread.setEditable(false);
 		text_fieldQueueBread.setBounds(343, 440, 57, 20);
 		contentPane.add(text_fieldQueueBread);
 		text_fieldQueueBread.setColumns(10);
@@ -249,6 +274,9 @@ public class MainGui extends JFrame {
 		contentPane.add(lblNewLabel_2);
 		
 		text_fieldQueueMilk = new JTextField();
+		text_fieldQueueMilk.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldQueueMilk.setText("0");
+		text_fieldQueueMilk.setEditable(false);
 		text_fieldQueueMilk.setColumns(10);
 		text_fieldQueueMilk.setBounds(546, 331, 57, 20);
 		contentPane.add(text_fieldQueueMilk);
@@ -258,6 +286,9 @@ public class MainGui extends JFrame {
 		contentPane.add(lblNewLabel_2_2);
 		
 		text_fieldQueueMeat = new JTextField();
+		text_fieldQueueMeat.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldQueueMeat.setText("0");
+		text_fieldQueueMeat.setEditable(false);
 		text_fieldQueueMeat.setColumns(10);
 		text_fieldQueueMeat.setBounds(440, 178, 57, 20);
 		contentPane.add(text_fieldQueueMeat);
@@ -267,6 +298,9 @@ public class MainGui extends JFrame {
 		contentPane.add(lblNewLabel_2_2_1);
 		
 		text_fieldServedMeat = new JTextField();
+		text_fieldServedMeat.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldServedMeat.setText("0");
+		text_fieldServedMeat.setEditable(false);
 		text_fieldServedMeat.setColumns(10);
 		text_fieldServedMeat.setBounds(440, 234, 57, 20);
 		contentPane.add(text_fieldServedMeat);
@@ -276,6 +310,9 @@ public class MainGui extends JFrame {
 		contentPane.add(lblNewLabel_1_2);
 		
 		text_fieldServedMilk = new JTextField();
+		text_fieldServedMilk.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldServedMilk.setText("0");
+		text_fieldServedMilk.setEditable(false);
 		text_fieldServedMilk.setColumns(10);
 		text_fieldServedMilk.setBounds(546, 381, 57, 20);
 		contentPane.add(text_fieldServedMilk);
@@ -285,6 +322,9 @@ public class MainGui extends JFrame {
 		contentPane.add(lblNewLabel_1_2_1);
 		
 		text_fieldServedBread = new JTextField();
+		text_fieldServedBread.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldServedBread.setText("0");
+		text_fieldServedBread.setEditable(false);
 		text_fieldServedBread.setColumns(10);
 		text_fieldServedBread.setBounds(343, 489, 57, 20);
 		contentPane.add(text_fieldServedBread);
@@ -329,6 +369,11 @@ public class MainGui extends JFrame {
 				cQueueMeat = new Counter(text_fieldQueueMeat);
 				cQueueCashbox = new Counter(text_fieldQueueCashbox);
 				
+				cBreadServed = new Counter(text_fieldServedBread);
+				cMilkServed = new Counter(text_fieldServedMilk);
+				cMeatServed = new Counter(text_fieldServedMeat);
+				cCashboxServed = new Counter(text_fieldServed);
+				
 				queueBread = new Queue(text_fieldQueueBread);
 				queueMilk= new Queue(text_fieldQueueMilk);
 				queueMeat = new Queue(text_fieldQueueMeat);
@@ -337,10 +382,27 @@ public class MainGui extends JFrame {
 				lLabelEnter = new LabelsToGo(labelEnter);
 				lLabelExit = new LabelsToGo(labelExit);
 				lLabelRoute = new LabelsToGo(labelRoute);
-				//lLabelBread = new LabelsToGo(labelBread);
 				
 				Creator creator = new Creator(MainGui.this, sliderArrival, labelEnter);
+				Bread bread = new Bread(MainGui.this, labelBread, queueBread, sliderBreadChoice, 
+										3, 3, cQueueBread, cBreadServed);
+				Milk milk = new Milk(MainGui.this, labelMilk, queueMilk, sliderMilkChoice, 
+										3, 3, cQueueMilk, cMilkServed);
+				Meat meat = new Meat(MainGui.this, labelMeat, queueMeat, sliderMeatChoice, 
+									3, 3, cQueueMeat, cMeatServed);
+				Cashbox cashbox = new Cashbox(MainGui.this, labelCashbox, queueCashbox, 
+											3, 3, cQueueCashbox, cCashboxServed);
+				
+				threadCashbox = new Thread(cashbox);
+				threadMeat = new Thread(meat);
+				threadMilk = new Thread(milk);
+				threadBread = new Thread(bread);
 				threadCreator = new Thread(creator);
+
+				threadCashbox.start();
+				threadMeat.start();
+				threadMilk.start();
+				threadBread.start();
 				threadCreator.start();
 			}
 		});
@@ -350,6 +412,10 @@ public class MainGui extends JFrame {
 				startend();
 				try {
 					threadCreator.join();
+					threadBread.join();
+					threadMilk.join();
+					threadMeat.join();
+					threadCashbox.join();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

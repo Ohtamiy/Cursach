@@ -37,9 +37,10 @@ public class Queue implements IFromTo{
 		textField.setText(String.valueOf(Integer.parseInt(textField.getText())+1));
 	}
 	
-	public void deleteFromQueue() {
-		this.queue.remove();
+	public Visitor deleteFromQueue() {
+		Visitor visitor = this.queue.remove();
 		textField.setText(String.valueOf(Integer.parseInt(textField.getText())-1));
+		return visitor;
 	}
 	
 	public void setQueue(BlockingQueue<Visitor> queue) { this.queue = queue; }

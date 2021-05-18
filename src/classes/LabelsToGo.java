@@ -6,7 +6,7 @@ import javax.swing.JLabel;
 
 import service.IFromTo;
 
-public class LabelsToGo implements IFromTo{
+public class LabelsToGo implements IFromTo {
 	
 	public JLabel label;
 	

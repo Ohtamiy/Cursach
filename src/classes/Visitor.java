@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -119,26 +120,22 @@ public class Visitor implements Runnable {
 		Thread t = new Thread() {
 			public void run() {
 				//Розміри транзакції
-				int hT = 50, wT=50 ;
+				int hT = 15, wT = 15;
 				// Параметры маршрута транзакции по Х
 				
-				int xFrom = 300;
-				int xTo = 500;
-				//int xFrom = from.getComponent().getX();
-				//int xTo = to.getComponent().getX();
+				int xFrom = pointFrom(from).getX();
+				int xTo = pointTo(to).getX();
 				
-//				if (xFrom > xTo) {
-//					// Если движение справа-налево
-//					xFrom = pointTo(from).x;
-//					xTo = pointFrom(to).x;
-//				}
+				if (xFrom > xTo) {
+					// Если движение справа-налево
+					xFrom = pointTo(from).getX();
+					xTo = pointFrom(to).getX();
+				}
 				int lenX = xTo - xFrom;
 				// Параметры маршрута транзакции по У
 				
-				int yFrom = 100;
-				int yTo = 700;
-//				int yFrom = from.getComponent().getY();
-//				int yTo = to.getComponent().getY();
+				int yFrom = pointFrom(from).getY();
+				int yTo = pointTo(to).getY();
 				
 				int lenY = yTo - yFrom;
 				// Длина маршрута
@@ -154,38 +151,32 @@ public class Visitor implements Runnable {
 				//gui.println("Транзакция начинает перемщаться от "
 						//+ from.getComponent().getName() + " к "
 						//+ to.getComponent().getName());
-				// Вызов метода обработки события "отправление"
+				
 				from.onOut(Visitor.this);
-				// Цикл перемещения
 				g.setColor(Color.ORANGE);
 				for (int x = xFrom, y = yFrom, i = 0; i < n; x += dx, y += dy) {
-					// Рисуем транзакцию
 					g.fillRect(x, y, wT, hT);
 					try {
-						// Задержка
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					// Повторный xor возвращает картинку фона
 					g.fillRect(x, y, wT, hT);
 				}
-				// Вызов метода обработки события "прибытие"
 				to.onIn(Visitor.this);
 			}
 		};
+		t.start();
 		return t;
 	}
 	
-//	private Component pointFrom(IFromTo from) {
-//
-//		return null;
-//	}
-//	
-//	private Component pointTo(IFromTo to) {
-//		
-//		return to.getComponent();
-//	}
+	private Component pointFrom(IFromTo from) {	
+		return from.getComponent();
+	}
+	
+	private Component pointTo(IFromTo to) {
+		return to.getComponent();
+	}
 	
 	// відзеркалення зображення
 	private synchronized Image mirror(Image img) {
@@ -217,7 +208,8 @@ public class Visitor implements Runnable {
 							this.moveFromTo(this.gui.lLabelRoute, this.gui.queueBread).join();
 							synchronized (this) {
 								while(this.productsToBuy.size()==currentsize) {
-									this.wait(); }}}					
+									this.wait(); }}
+						}					
 						count++;
 						this.moveFromTo(this.gui.queueBread, this.gui.lLabelRoute).join();
 						break;}
@@ -227,7 +219,8 @@ public class Visitor implements Runnable {
 							this.moveFromTo(this.gui.lLabelRoute, this.gui.queueMilk).join();
 							synchronized (this) {
 								while(this.productsToBuy.size()==currentsize) {
-									this.wait(); }}}
+									this.wait(); }}
+						}
 						count++;
 						this.moveFromTo(this.gui.queueMilk, this.gui.lLabelRoute).join();
 						break;}
@@ -235,18 +228,18 @@ public class Visitor implements Runnable {
 					case(3):{
 						if(this.gui.queueMeat.getQueue().size() <= this.maxQueueSize) {
 							this.moveFromTo(this.gui.lLabelRoute, this.gui.queueMeat).join();
-
 							synchronized (this) {
 								while(this.productsToBuy.size()==currentsize) {
-									this.wait(); }}}
+									this.wait(); }}
+						}
 						count++;
 						this.moveFromTo(this.gui.queueMeat, this.gui.lLabelRoute).join();	
 						break;}
 					}
 				}
-				
+				this.moveFromTo(this.gui.lLabelRoute, this.gui.lLabelExit).join();
+				this.gui.text_fieldServed.setText(String.valueOf(Integer.parseInt(this.gui.text_fieldServed.getText())+1));
 			}
-			this.moveFromTo(this.gui.lLabelRoute, this.gui.lLabelExit).join();
 		}
 		catch (InterruptedException e) { e.printStackTrace(); }
 	}

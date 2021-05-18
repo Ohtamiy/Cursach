@@ -24,6 +24,9 @@ public class Counter implements IFromTo{
 	@Override
 	public Component getComponent() { return null; }
 
-	public void setCount(int count) { this.count = count; }
-	public int getCount() { return count; }
+	public void setCount(int count) { textField.setText(String.valueOf(count)); }
+	public int getCount() { 
+		this.count = Integer.parseInt(textField.getText()); 
+		return count;
+	}
 }

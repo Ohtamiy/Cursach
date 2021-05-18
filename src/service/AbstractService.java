@@ -3,12 +3,14 @@ package service;
 import java.awt.Component;
 import java.net.URL;
 import java.util.Random;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
+import classes.Counter;
 import classes.Queue;
 import classes.Visitor;
 import gui.MainGui;
@@ -23,9 +25,10 @@ public abstract class AbstractService implements IFromTo, Runnable {
 	public JSlider workTime;
 	public int maxsize;
 	public int amountOfPictures;
-	public JTextField served;
-	public JTextField amountIn;
+	public Counter served;
+	public Counter amountIn;
 	public Random rnd;
+	public Vector<Visitor> visitor = new Vector<>(3);
 	
 	//public Vector<Visitor> visitor;
 	
@@ -33,7 +36,7 @@ public abstract class AbstractService implements IFromTo, Runnable {
 	 * слідер часу обслуговування, максимальний розмір, кількість картинок,
 	 * посилання на JTextField поточної кількості всередині об'єкта */
 	public AbstractService(MainGui gui, JLabel label, Queue queue, JSlider workTime,
-							int maxsize, int amountOfPictures, JTextField served) {
+							int maxsize, int amountOfPictures, Counter amountIn, Counter served) {
 		this.gui = gui;
 		this.label = label;
 		this.queue = queue;
@@ -41,11 +44,10 @@ public abstract class AbstractService implements IFromTo, Runnable {
 		this.maxsize = maxsize;
 		this.amountOfPictures = amountOfPictures;
 		this.served = served;
+		this.amountIn = amountIn;
 	}
 	
-	public AbstractService() {
-		super();
-	}
+	public AbstractService() { super(); }
 
 	@Override
 	public void onOut(Visitor vis) { }
@@ -58,7 +60,7 @@ public abstract class AbstractService implements IFromTo, Runnable {
 	public Component getComponent() { return label; }
 	
 	// метод відображення роботи об'єкту, саме анімація зміни картинок
-	protected void ShowWorking(String[] pictures) {
+	protected void ShowWorking(String pictures) {
 		
 	}
 	

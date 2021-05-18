@@ -4,6 +4,7 @@ import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
+import classes.Counter;
 import classes.Queue;
 import gui.MainGui;
 
@@ -11,12 +12,11 @@ import gui.MainGui;
 
 public class Cashbox extends AbstractService {
 
-	public Cashbox(MainGui gui, JLabel label, Queue queue, JSlider workTime, 
-			int maxsize, int amountOfPictures, JTextField served, JTextField amountIn) {
+	public Cashbox(MainGui gui, JLabel label, Queue queue,
+			int maxsize, int amountOfPictures, Counter amountIn, Counter served) {
 		this.gui = gui;
 		this.label = label;
 		this.queue = queue;
-		this.workTime = workTime;
 		this.maxsize = maxsize;
 		this.amountOfPictures = amountOfPictures;
 		this.served = served;
