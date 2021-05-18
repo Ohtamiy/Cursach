@@ -75,6 +75,11 @@ public class Creator implements IFromTo,Runnable {
 				}
 				// виконуємо, поки не було завершено процес користувачем
 			} while(!this.gui.end);
+//			try {
+//				this.thread.join();
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 		}
 	}
 

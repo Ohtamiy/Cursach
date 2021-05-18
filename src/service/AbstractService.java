@@ -28,7 +28,7 @@ public abstract class AbstractService implements IFromTo, Runnable {
 	public Counter served;
 	public Counter amountIn;
 	public Random rnd;
-	public Vector<Visitor> visitor = new Vector<>(3);
+	public Vector<Visitor> visitor = new Vector<>();
 	
 	//public Vector<Visitor> visitor;
 	

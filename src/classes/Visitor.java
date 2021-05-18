@@ -153,7 +153,7 @@ public class Visitor implements Runnable {
 						//+ to.getComponent().getName());
 				
 				from.onOut(Visitor.this);
-				g.setColor(Color.ORANGE);
+				//g.setColor(Color.ORANGE);
 				for (int x = xFrom, y = yFrom, i = 0; i < n; x += dx, y += dy) {
 					g.fillRect(x, y, wT, hT);
 					try {
@@ -237,8 +237,14 @@ public class Visitor implements Runnable {
 						break;}
 					}
 				}
-				this.moveFromTo(this.gui.lLabelRoute, this.gui.lLabelExit).join();
-				this.gui.text_fieldServed.setText(String.valueOf(Integer.parseInt(this.gui.text_fieldServed.getText())+1));
+				if(this.gui.queueCashbox.getQueue().size() > maxQueueSize) {
+					this.moveFromTo(this.gui.lLabelRoute, this.gui.lLabelExit).join();
+					this.gui.text_fieldLost.setText(String.valueOf(Integer.parseInt(this.gui.text_fieldLost.getText())+1));
+				}
+				else {
+					this.moveFromTo(this.gui.lLabelRoute, this.gui.queueCashbox).join();
+					this.gui.text_fieldServed.setText(String.valueOf(Integer.parseInt(this.gui.text_fieldServed.getText())+1));
+				}
 			}
 		}
 		catch (InterruptedException e) { e.printStackTrace(); }

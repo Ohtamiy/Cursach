@@ -8,7 +8,7 @@ import service.IFromTo;
 
 // счетчики для всякого - разного
 
-public class Counter implements IFromTo{
+public class Counter implements IFromTo {
 	
 	public JTextField textField;
 	private int count;
@@ -24,7 +24,10 @@ public class Counter implements IFromTo{
 	@Override
 	public Component getComponent() { return null; }
 
-	public void setCount(int count) { textField.setText(String.valueOf(count)); }
+	public void setCount(int count) { 
+		this.count = count;
+		textField.setText(String.valueOf(count)); 
+	}
 	public int getCount() { 
 		this.count = Integer.parseInt(textField.getText()); 
 		return count;

@@ -72,6 +72,8 @@ public class MainGui extends JFrame {
 	public Counter cMeatServed;
 	public Counter cCashboxServed;
 	
+	public Counter cLost;
+	
 	public Queue queueBread;
 	public Queue queueMilk;
 	public Queue queueMeat;
@@ -374,6 +376,8 @@ public class MainGui extends JFrame {
 				cMeatServed = new Counter(text_fieldServedMeat);
 				cCashboxServed = new Counter(text_fieldServed);
 				
+				cLost = new Counter(text_fieldLost);
+				
 				queueBread = new Queue(text_fieldQueueBread);
 				queueMilk= new Queue(text_fieldQueueMilk);
 				queueMeat = new Queue(text_fieldQueueMeat);
@@ -391,7 +395,7 @@ public class MainGui extends JFrame {
 				Meat meat = new Meat(MainGui.this, labelMeat, queueMeat, sliderMeatChoice, 
 									3, 3, cQueueMeat, cMeatServed);
 				Cashbox cashbox = new Cashbox(MainGui.this, labelCashbox, queueCashbox, 
-											3, 3, cQueueCashbox, cCashboxServed);
+											3, 3, cQueueCashbox, cCashboxServed, cLost);
 				
 				threadCashbox = new Thread(cashbox);
 				threadMeat = new Thread(meat);
