@@ -43,7 +43,6 @@ public class Cashbox extends AbstractService {
 
 					if(!this.queue.getQueue().isEmpty()) {
 						//this.gui.println(this.label.getName() + " заказывает транзакцию из очереди");
-
 						this.visitor.add(this.queue.deleteFromQueue());
 						//this.amountinAtr.setText(String.valueOf((Integer.parseInt(this.amountinAtr.getText())+1)));
 						this.queue.notify();
@@ -63,7 +62,7 @@ public class Cashbox extends AbstractService {
 			for(int k = 0; k < this.visitor.size(); k++) {
 				synchronized (this.visitor.get(k)) {
 					try {
-						Thread.sleep(workTime.getValue());	       
+						Thread.sleep(this.visitor.get(k).products*1500);	       
 						//this.display("/res/other/"+this.vis.get(k).getPlace().size()+"11.png");  
 						this.amountIn.setCount(this.amountIn.getCount()+1);
 					}
@@ -72,14 +71,16 @@ public class Cashbox extends AbstractService {
 					//this.display("/res/other/ticketBox.png"); 
 					this.visitor.get(k).notify();
 					this.served.setCount(this.served.getCount()+1);
+					try {
+						this.visitor.get(k).moveFromTo(this.gui.queueCashbox, this.gui.lLabelExit).join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					//this.gui.println(this.vis.get(k).place.toString());
 				}
 			}
-			//Очищення апарату
-			//this.amountinAtr.setText("0");   
-			//this.amountinAtr.setForeground(Color.black);
+			this.amountIn.setCount(0);
 			this.visitor.clear();
-
 		}
 	}
 

@@ -28,9 +28,7 @@ public abstract class AbstractService implements IFromTo, Runnable {
 	public Counter served;
 	public Counter amountIn;
 	public Random rnd;
-	public Vector<Visitor> visitor = new Vector<>();
-	
-	//public Vector<Visitor> visitor;
+	public Vector<Visitor> visitor;
 	
 	/* посилання на головне вікно, label знаходження об'єкта, чергу об'єкта,
 	 * слідер часу обслуговування, максимальний розмір, кількість картинок,
@@ -45,6 +43,7 @@ public abstract class AbstractService implements IFromTo, Runnable {
 		this.amountOfPictures = amountOfPictures;
 		this.served = served;
 		this.amountIn = amountIn;
+		this.visitor = new Vector<>(maxsize);
 	}
 	
 	public AbstractService() { super(); }

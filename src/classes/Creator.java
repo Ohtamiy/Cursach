@@ -19,9 +19,10 @@ public class Creator implements IFromTo,Runnable {
 	public MainGui gui;
 	public JSlider speed;
 	public JLabel label;
-	public Random rnd = new Random();
+	public Random rnd;
 	public Visitor visitor;
 	public Thread thread;
+	public int maxQueueSize;
 	
 	public Map<Integer,Vector<Integer>> choices = Map.ofEntries(
 		Map.entry(0, new Vector<Integer>() {{ add(0); }}),
@@ -44,6 +45,8 @@ public class Creator implements IFromTo,Runnable {
 		this.gui = gui;
 		this.speed = speed;
 		this.label = label;
+		this.maxQueueSize = this.gui.maxQueueSize;
+		this.rnd = new Random();
 	}
 
 	@Override
@@ -63,7 +66,7 @@ public class Creator implements IFromTo,Runnable {
 			int counter = 0;
 			do {
 				// створюємо нового користувача
-				visitor = new Visitor(this.gui, this, 3, choices.get(rnd.nextInt(13)));
+				visitor = new Visitor(this.gui, this, maxQueueSize, choices.get(rnd.nextInt(13)));
 				// запускаємо його потік
 				(this.thread = new Thread(this.visitor)).start();
 				System.out.println("Visitor#" + counter++ + " created. His choice: " +  visitor.productsToBuy);

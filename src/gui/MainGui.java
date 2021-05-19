@@ -1,19 +1,21 @@
 package gui;
 
 import java.awt.EventQueue;
+import java.awt.Image;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import additional.Sound;
 import classes.Counter;
 import classes.Creator;
 import classes.LabelsToGo;
 import classes.Queue;
-import service.Bread;
+import service.Armor;
 import service.Cashbox;
-import service.Meat;
-import service.Milk;
+import service.Potion;
+import service.Weapon;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -24,8 +26,16 @@ import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.imageio.ImageIO;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
 
@@ -36,9 +46,9 @@ public class MainGui extends JFrame {
 	public JTextField text_fieldQueueCashbox;
 	public JTextField text_fieldServed;
 	public JTextField text_fieldLost;
-	public JTextField text_fieldQueueBread;
-	public JTextField text_fieldQueueMilk;
-	public JTextField text_fieldQueueMeat;
+	public JTextField text_fieldqueueArmor;
+	public JTextField text_fieldqueueWeapon;
+	public JTextField text_fieldqueuePotion;
 	public JTextField text_fieldServedMeat;
 	public JTextField text_fieldServedMilk;
 	public JTextField text_fieldServedBread;
@@ -46,9 +56,9 @@ public class MainGui extends JFrame {
 	public boolean end = true;
 	
 	public JSlider sliderArrival;
-	public JSlider sliderMeatChoice;
-	public JSlider sliderMilkChoice;
-	public JSlider sliderBreadChoice;
+	public JSlider sliderPotionChoice;
+	public JSlider sliderWeaponChoice;
+	public JSlider sliderArmorChoice;
 	public JSlider sliderVolume;
 	
 	public JButton startBtn;
@@ -56,39 +66,44 @@ public class MainGui extends JFrame {
 		
 	public JLabel labelRoute;
 	public JLabel labelCashbox;
-	public JLabel labelMeat;
-	public JLabel labelMilk;
-	public JLabel labelBread;
+	public JLabel labelPotion;
+	public JLabel labelWeapon;
+	public JLabel labelArmor;
 	public JLabel labelEnter;
 	public JLabel labelExit;
 	
-	public Counter cQueueBread;
-	public Counter cQueueMilk;
-	public Counter cQueueMeat;
+	public Counter cqueueArmor;
+	public Counter cqueueWeapon;
+	public Counter cqueuePotion;
 	public Counter cQueueCashbox;
 	
-	public Counter cBreadServed;
-	public Counter cMilkServed;
-	public Counter cMeatServed;
+	public Counter cArmorServed;
+	public Counter cWeaponServed;
+	public Counter cPotionServed;
 	public Counter cCashboxServed;
 	
 	public Counter cLost;
 	
-	public Queue queueBread;
-	public Queue queueMilk;
-	public Queue queueMeat;
+	public Queue queueArmor;
+	public Queue queueWeapon;
+	public Queue queuePotion;
 	public Queue queueCashbox;
 	
 	public LabelsToGo lLabelEnter;
 	public LabelsToGo lLabelExit;
 	public LabelsToGo lLabelRoute;
-	//public LabelsToGo lLabelBread;
+	//public LabelsToGo llabelArmor;
 	
 	public Thread threadCreator;
-	public Thread threadBread;
-	public Thread threadMilk;
-	public Thread threadMeat;
+	public Thread threadPotion;
+	public Thread threadWeapon;
+	public Thread threadArmor;
 	public Thread threadCashbox;
+	public Thread threadMusic;
+	
+	public Sound soundtrack;
+	
+	public int maxQueueSize = 3;
 
 	/**
 	 * Launch the application.
@@ -109,12 +124,13 @@ public class MainGui extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @throws IOException 
 	 */
-	public MainGui() {
+	public MainGui() throws IOException {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(MainGui.class.getResource("/pictures/\u0430\u0442\u0431.png")));
 		setTitle("Supermarket");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 754, 592);
+		setBounds(100, 100, 755, 698);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -200,100 +216,112 @@ public class MainGui extends JFrame {
 		contentPane.add(labelExit);
 		
 		labelEnter = new JLabel("\u0412\u0445\u0456\u0434---------------------");
-		labelEnter.setBounds(10, 406, 116, 89);
+		labelEnter.setBounds(10, 521, 116, 89);
 		contentPane.add(labelEnter);
 		
-		labelMeat = new JLabel("Meat-----------------------");
-		labelMeat.setBounds(512, 127, 116, 71);
-		contentPane.add(labelMeat);
+		labelPotion = new JLabel();
+		labelPotion.setBounds(504, 137, 91, 89);
+		contentPane.add(labelPotion);
+		Image imagePotionShelf = ImageIO.read(MainGui.class.getResource("/pictures/fullShelf_potion.png"))
+				.getScaledInstance(labelPotion.getWidth(), labelPotion.getHeight(), 
+						Image.SCALE_SMOOTH);
+		labelPotion.setIcon(new ImageIcon(imagePotionShelf));
 		
-		labelMilk = new JLabel("\u041C\u043E\u043B\u043E\u043A\u043E-------------------");
-		labelMilk.setBounds(613, 280, 116, 71);
-		contentPane.add(labelMilk);
+		labelWeapon = new JLabel("");
+		labelWeapon.setBounds(607, 318, 116, 66);
+		contentPane.add(labelWeapon);
+		Image imageWeaponShelf = ImageIO.read(MainGui.class.getResource("/pictures/fullShelf_weapon.png"))
+				.getScaledInstance(labelWeapon.getWidth(), labelWeapon.getHeight(), 
+						Image.SCALE_SMOOTH);
+		labelWeapon.setIcon(new ImageIcon(imageWeaponShelf));
 		
-		labelBread = new JLabel("\u0425\u043B\u0456\u0431-----------------------");
-		labelBread.setBounds(410, 378, 116, 71);
-		contentPane.add(labelBread);
+		labelArmor = new JLabel();
+		labelArmor.setBounds(479, 485, 116, 71);
+		contentPane.add(labelArmor);
+		Image imageArmorShelf = ImageIO.read(MainGui.class.getResource("/pictures/fullShelf_protection.png"))
+				.getScaledInstance(labelArmor.getWidth(), labelArmor.getHeight(), 
+						Image.SCALE_SMOOTH);
+		labelArmor.setIcon(new ImageIcon(imageArmorShelf));
 		
-		sliderMeatChoice = new JSlider();
-		sliderMeatChoice.setValue(3);
-		sliderMeatChoice.setToolTipText("");
-		sliderMeatChoice.setPaintTicks(true);
-		sliderMeatChoice.setPaintLabels(true);
-		sliderMeatChoice.setMinorTickSpacing(1);
-		sliderMeatChoice.setMinimum(1);
-		sliderMeatChoice.setMaximum(7);
-		sliderMeatChoice.setMajorTickSpacing(1);
-		sliderMeatChoice.setBounds(512, 224, 116, 45);
-		contentPane.add(sliderMeatChoice);
+		sliderPotionChoice = new JSlider();
+		sliderPotionChoice.setValue(3);
+		sliderPotionChoice.setToolTipText("");
+		sliderPotionChoice.setPaintTicks(true);
+		sliderPotionChoice.setPaintLabels(true);
+		sliderPotionChoice.setMinorTickSpacing(1);
+		sliderPotionChoice.setMinimum(1);
+		sliderPotionChoice.setMaximum(7);
+		sliderPotionChoice.setMajorTickSpacing(1);
+		sliderPotionChoice.setBounds(497, 254, 116, 45);
+		contentPane.add(sliderPotionChoice);
 		
 		JLabel lblNewLabel_2_1_2 = new JLabel("\u0428\u0432\u0438\u0434\u043A\u0456\u0441\u0442\u044C \u0432\u0438\u0431\u043E\u0440\u0443");
-		lblNewLabel_2_1_2.setBounds(522, 203, 100, 14);
+		lblNewLabel_2_1_2.setBounds(513, 238, 100, 14);
 		contentPane.add(lblNewLabel_2_1_2);
 		
-		sliderMilkChoice = new JSlider();
-		sliderMilkChoice.setValue(3);
-		sliderMilkChoice.setToolTipText("");
-		sliderMilkChoice.setPaintTicks(true);
-		sliderMilkChoice.setPaintLabels(true);
-		sliderMilkChoice.setMinorTickSpacing(1);
-		sliderMilkChoice.setMinimum(1);
-		sliderMilkChoice.setMaximum(5);
-		sliderMilkChoice.setMajorTickSpacing(1);
-		sliderMilkChoice.setBounds(613, 377, 116, 45);
-		contentPane.add(sliderMilkChoice);
+		sliderWeaponChoice = new JSlider();
+		sliderWeaponChoice.setValue(3);
+		sliderWeaponChoice.setToolTipText("");
+		sliderWeaponChoice.setPaintTicks(true);
+		sliderWeaponChoice.setPaintLabels(true);
+		sliderWeaponChoice.setMinorTickSpacing(1);
+		sliderWeaponChoice.setMinimum(1);
+		sliderWeaponChoice.setMaximum(5);
+		sliderWeaponChoice.setMajorTickSpacing(1);
+		sliderWeaponChoice.setBounds(607, 414, 116, 45);
+		contentPane.add(sliderWeaponChoice);
 		
 		JLabel lblNewLabel_2_1_2_1 = new JLabel("\u0428\u0432\u0438\u0434\u043A\u0456\u0441\u0442\u044C \u0432\u0438\u0431\u043E\u0440\u0443");
-		lblNewLabel_2_1_2_1.setBounds(623, 362, 100, 14);
+		lblNewLabel_2_1_2_1.setBounds(623, 395, 100, 14);
 		contentPane.add(lblNewLabel_2_1_2_1);
 		
-		sliderBreadChoice = new JSlider();
-		sliderBreadChoice.setValue(3);
-		sliderBreadChoice.setToolTipText("");
-		sliderBreadChoice.setPaintTicks(true);
-		sliderBreadChoice.setPaintLabels(true);
-		sliderBreadChoice.setMinorTickSpacing(1);
-		sliderBreadChoice.setMinimum(1);
-		sliderBreadChoice.setMaximum(4);
-		sliderBreadChoice.setMajorTickSpacing(1);
-		sliderBreadChoice.setBounds(410, 475, 116, 45);
-		contentPane.add(sliderBreadChoice);
+		sliderArmorChoice = new JSlider();
+		sliderArmorChoice.setValue(3);
+		sliderArmorChoice.setToolTipText("");
+		sliderArmorChoice.setPaintTicks(true);
+		sliderArmorChoice.setPaintLabels(true);
+		sliderArmorChoice.setMinorTickSpacing(1);
+		sliderArmorChoice.setMinimum(1);
+		sliderArmorChoice.setMaximum(4);
+		sliderArmorChoice.setMajorTickSpacing(1);
+		sliderArmorChoice.setBounds(479, 581, 116, 45);
+		contentPane.add(sliderArmorChoice);
 		
 		JLabel lblNewLabel_2_1_2_1_1 = new JLabel("\u0428\u0432\u0438\u0434\u043A\u0456\u0441\u0442\u044C \u0432\u0438\u0431\u043E\u0440\u0443");
-		lblNewLabel_2_1_2_1_1.setBounds(420, 460, 100, 14);
+		lblNewLabel_2_1_2_1_1.setBounds(495, 567, 100, 14);
 		contentPane.add(lblNewLabel_2_1_2_1_1);
 		
-		text_fieldQueueBread = new JTextField();
-		text_fieldQueueBread.setText("0");
-		text_fieldQueueBread.setHorizontalAlignment(SwingConstants.CENTER);
-		text_fieldQueueBread.setEditable(false);
-		text_fieldQueueBread.setBounds(343, 440, 57, 20);
-		contentPane.add(text_fieldQueueBread);
-		text_fieldQueueBread.setColumns(10);
+		text_fieldqueueArmor = new JTextField();
+		text_fieldqueueArmor.setText("0");
+		text_fieldqueueArmor.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldqueueArmor.setEditable(false);
+		text_fieldqueueArmor.setBounds(412, 536, 57, 20);
+		contentPane.add(text_fieldqueueArmor);
+		text_fieldqueueArmor.setColumns(10);
 		
 		JLabel lblNewLabel_2 = new JLabel("\u0427\u0435\u0440\u0433\u0430");
-		lblNewLabel_2.setBounds(354, 423, 46, 14);
+		lblNewLabel_2.setBounds(424, 521, 46, 14);
 		contentPane.add(lblNewLabel_2);
 		
-		text_fieldQueueMilk = new JTextField();
-		text_fieldQueueMilk.setHorizontalAlignment(SwingConstants.CENTER);
-		text_fieldQueueMilk.setText("0");
-		text_fieldQueueMilk.setEditable(false);
-		text_fieldQueueMilk.setColumns(10);
-		text_fieldQueueMilk.setBounds(546, 331, 57, 20);
-		contentPane.add(text_fieldQueueMilk);
+		text_fieldqueueWeapon = new JTextField();
+		text_fieldqueueWeapon.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldqueueWeapon.setText("0");
+		text_fieldqueueWeapon.setEditable(false);
+		text_fieldqueueWeapon.setColumns(10);
+		text_fieldqueueWeapon.setBounds(546, 364, 57, 20);
+		contentPane.add(text_fieldqueueWeapon);
 		
 		JLabel lblNewLabel_2_2 = new JLabel("\u0427\u0435\u0440\u0433\u0430");
-		lblNewLabel_2_2.setBounds(557, 317, 46, 14);
+		lblNewLabel_2_2.setBounds(550, 344, 46, 14);
 		contentPane.add(lblNewLabel_2_2);
 		
-		text_fieldQueueMeat = new JTextField();
-		text_fieldQueueMeat.setHorizontalAlignment(SwingConstants.CENTER);
-		text_fieldQueueMeat.setText("0");
-		text_fieldQueueMeat.setEditable(false);
-		text_fieldQueueMeat.setColumns(10);
-		text_fieldQueueMeat.setBounds(440, 178, 57, 20);
-		contentPane.add(text_fieldQueueMeat);
+		text_fieldqueuePotion = new JTextField();
+		text_fieldqueuePotion.setHorizontalAlignment(SwingConstants.CENTER);
+		text_fieldqueuePotion.setText("0");
+		text_fieldqueuePotion.setEditable(false);
+		text_fieldqueuePotion.setColumns(10);
+		text_fieldqueuePotion.setBounds(440, 178, 57, 20);
+		contentPane.add(text_fieldqueuePotion);
 		
 		JLabel lblNewLabel_2_2_1 = new JLabel("\u0427\u0435\u0440\u0433\u0430");
 		lblNewLabel_2_2_1.setBounds(456, 165, 46, 14);
@@ -304,11 +332,11 @@ public class MainGui extends JFrame {
 		text_fieldServedMeat.setText("0");
 		text_fieldServedMeat.setEditable(false);
 		text_fieldServedMeat.setColumns(10);
-		text_fieldServedMeat.setBounds(440, 234, 57, 20);
+		text_fieldServedMeat.setBounds(440, 235, 57, 20);
 		contentPane.add(text_fieldServedMeat);
 		
 		JLabel lblNewLabel_1_2 = new JLabel("\u041E\u0431\u0441\u043B\u0443\u0436\u0435\u043D\u043E");
-		lblNewLabel_1_2.setBounds(440, 220, 63, 14);
+		lblNewLabel_1_2.setBounds(439, 220, 63, 14);
 		contentPane.add(lblNewLabel_1_2);
 		
 		text_fieldServedMilk = new JTextField();
@@ -316,11 +344,11 @@ public class MainGui extends JFrame {
 		text_fieldServedMilk.setText("0");
 		text_fieldServedMilk.setEditable(false);
 		text_fieldServedMilk.setColumns(10);
-		text_fieldServedMilk.setBounds(546, 381, 57, 20);
+		text_fieldServedMilk.setBounds(546, 411, 57, 20);
 		contentPane.add(text_fieldServedMilk);
 		
 		JLabel lblNewLabel_1_2_1 = new JLabel("\u041E\u0431\u0441\u043B\u0443\u0436\u0435\u043D\u043E");
-		lblNewLabel_1_2_1.setBounds(546, 362, 63, 14);
+		lblNewLabel_1_2_1.setBounds(550, 389, 63, 14);
 		contentPane.add(lblNewLabel_1_2_1);
 		
 		text_fieldServedBread = new JTextField();
@@ -328,11 +356,11 @@ public class MainGui extends JFrame {
 		text_fieldServedBread.setText("0");
 		text_fieldServedBread.setEditable(false);
 		text_fieldServedBread.setColumns(10);
-		text_fieldServedBread.setBounds(343, 489, 57, 20);
+		text_fieldServedBread.setBounds(412, 581, 57, 20);
 		contentPane.add(text_fieldServedBread);
 		
 		JLabel lblNewLabel_1_2_1_1 = new JLabel("\u041E\u0431\u0441\u043B\u0443\u0436\u0435\u043D\u043E");
-		lblNewLabel_1_2_1_1.setBounds(343, 475, 63, 14);
+		lblNewLabel_1_2_1_1.setBounds(412, 567, 63, 14);
 		contentPane.add(lblNewLabel_1_2_1_1);
 		
 		sliderVolume = new JSlider();
@@ -342,7 +370,7 @@ public class MainGui extends JFrame {
 		sliderVolume.setPaintLabels(true);
 		sliderVolume.setMinorTickSpacing(1);
 		sliderVolume.setMinimum(1);
-		sliderVolume.setMaximum(10);
+		sliderVolume.setMaximum(6);
 		sliderVolume.setMajorTickSpacing(1);
 		sliderVolume.setBounds(499, 45, 200, 45);
 		contentPane.add(sliderVolume);
@@ -352,7 +380,7 @@ public class MainGui extends JFrame {
 		contentPane.add(lblNewLabel_2_1_1);
 		
 		labelRoute = new JLabel("Route----------------");
-		labelRoute.setBounds(249, 280, 100, 71);
+		labelRoute.setBounds(222, 364, 100, 71);
 		contentPane.add(labelRoute);
 		
 		menuAbout.addActionListener(new ActionListener() {
@@ -366,59 +394,93 @@ public class MainGui extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				startend();
 				
-				cQueueBread = new Counter(text_fieldQueueBread);
-				cQueueMilk = new Counter(text_fieldQueueMilk);
-				cQueueMeat = new Counter(text_fieldQueueMeat);
+				threadMusic = new Thread() {
+					@Override
+			        public void run() {
+						try {
+							soundtrack = new Sound("/pictures/soundtrack.wav",sliderVolume);
+							//soundtrack = new Sound("/pictures/newATB.wav",sliderVolume);
+							soundtrack.playMusic();
+							soundtrack.loopMusic();
+							
+							new Thread(() ->{
+								while(true) {
+									soundtrack.setVolume();
+									try {
+										Thread.sleep(500);
+									} catch (InterruptedException e) {
+										e.printStackTrace();
+									}
+								}
+							}).start();
+
+							threadCreator.join();
+							threadPotion.join();
+							threadWeapon.join();
+							threadArmor.join();
+							threadCashbox.join();
+							
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				};
+				
+				cqueueArmor = new Counter(text_fieldqueueArmor);
+				cqueueWeapon = new Counter(text_fieldqueueWeapon);
+				cqueuePotion = new Counter(text_fieldqueuePotion);
 				cQueueCashbox = new Counter(text_fieldQueueCashbox);
 				
-				cBreadServed = new Counter(text_fieldServedBread);
-				cMilkServed = new Counter(text_fieldServedMilk);
-				cMeatServed = new Counter(text_fieldServedMeat);
+				cArmorServed = new Counter(text_fieldServedBread);
+				cWeaponServed = new Counter(text_fieldServedMilk);
+				cPotionServed = new Counter(text_fieldServedMeat);
 				cCashboxServed = new Counter(text_fieldServed);
 				
 				cLost = new Counter(text_fieldLost);
 				
-				queueBread = new Queue(text_fieldQueueBread);
-				queueMilk= new Queue(text_fieldQueueMilk);
-				queueMeat = new Queue(text_fieldQueueMeat);
-				queueCashbox = new Queue(text_fieldQueueCashbox);
+				queueArmor = new Queue(text_fieldqueueArmor,maxQueueSize);
+				queueWeapon= new Queue(text_fieldqueueWeapon,maxQueueSize);
+				queuePotion = new Queue(text_fieldqueuePotion,maxQueueSize);
+				queueCashbox = new Queue(text_fieldQueueCashbox,maxQueueSize);
 				
 				lLabelEnter = new LabelsToGo(labelEnter);
 				lLabelExit = new LabelsToGo(labelExit);
 				lLabelRoute = new LabelsToGo(labelRoute);
 				
 				Creator creator = new Creator(MainGui.this, sliderArrival, labelEnter);
-				Bread bread = new Bread(MainGui.this, labelBread, queueBread, sliderBreadChoice, 
-										3, 3, cQueueBread, cBreadServed);
-				Milk milk = new Milk(MainGui.this, labelMilk, queueMilk, sliderMilkChoice, 
-										3, 3, cQueueMilk, cMilkServed);
-				Meat meat = new Meat(MainGui.this, labelMeat, queueMeat, sliderMeatChoice, 
-									3, 3, cQueueMeat, cMeatServed);
+				Armor armor = new Armor(MainGui.this, labelArmor, queueArmor, sliderArmorChoice, 
+										3, 3, cqueueArmor, cArmorServed);
+				Weapon weapon = new Weapon(MainGui.this, labelWeapon, queueWeapon, sliderWeaponChoice, 
+										3, 3, cqueueWeapon, cWeaponServed);
+				Potion potion = new Potion(MainGui.this, labelPotion, queuePotion, sliderPotionChoice, 
+									3, 3, cqueuePotion, cPotionServed);
 				Cashbox cashbox = new Cashbox(MainGui.this, labelCashbox, queueCashbox, 
 											3, 3, cQueueCashbox, cCashboxServed, cLost);
 				
 				threadCashbox = new Thread(cashbox);
-				threadMeat = new Thread(meat);
-				threadMilk = new Thread(milk);
-				threadBread = new Thread(bread);
+				threadPotion = new Thread(potion);
+				threadWeapon = new Thread(weapon);
+				threadArmor = new Thread(armor);
 				threadCreator = new Thread(creator);
 
 				threadCashbox.start();
-				threadMeat.start();
-				threadMilk.start();
-				threadBread.start();
+				threadPotion.start();
+				threadWeapon.start();
+				threadArmor.start();
 				threadCreator.start();
+				threadMusic.start();
 			}
 		});
 		
 		endBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				startend();
+				startend();			
+				soundtrack.stopMusic();			
 				try {
 					threadCreator.join();
-					threadBread.join();
-					threadMilk.join();
-					threadMeat.join();
+					threadPotion.join();
+					threadWeapon.join();
+					threadArmor.join();
 					threadCashbox.join();
 				} catch (InterruptedException e) {
 					e.printStackTrace();

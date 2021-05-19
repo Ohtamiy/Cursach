@@ -13,7 +13,10 @@ public class Counter implements IFromTo {
 	public JTextField textField;
 	private int count;
 	
-	public Counter(JTextField textField) { this.textField = textField; }
+	public Counter(JTextField textField) { 
+		this.textField = textField; 
+		this.count = Integer.parseInt(textField.getText());
+	}
 
 	@Override
 	public void onOut(Visitor vis) { }

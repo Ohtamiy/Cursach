@@ -11,10 +11,15 @@ import service.IFromTo;
 
 public class Queue implements IFromTo{
 
-	private BlockingQueue<Visitor> queue = new ArrayBlockingQueue<>(3);
+	private BlockingQueue<Visitor> queue;
 	public JTextField textField;
+	public int maxSize;
 	
-	public Queue(JTextField textField) { this.textField = textField; }
+	public Queue(JTextField textField, int maxSize) { 
+		this.textField = textField; 
+		this.maxSize = maxSize;
+		this.queue = new ArrayBlockingQueue<>(maxSize);
+	}
 
 	@Override
 	public void onOut(Visitor vis) { }
@@ -22,7 +27,7 @@ public class Queue implements IFromTo{
 	@Override
 	public void onIn(Visitor vis) {
 		synchronized (this) {
-			if(this.queue.size() < 4)
+			if(this.queue.size() < maxSize)
 				this.addToQueue(vis);
 			this.notify();
 			return;
@@ -30,7 +35,7 @@ public class Queue implements IFromTo{
 	}
 
 	@Override
-	public Component getComponent() { return null; }
+	public Component getComponent() { return textField; }
 	
 	public void addToQueue(Visitor vis) {
 		this.queue.add(vis);
