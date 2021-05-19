@@ -4,47 +4,48 @@ import java.awt.Component;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
 import service.IFromTo;
 
 public class Queue implements IFromTo{
 
 	private BlockingQueue<Visitor> queue;
-	public JTextField textField;
 	public int maxSize;
+	public Counter counter;
 	
-	public Queue(JTextField textField, int maxSize) { 
-		this.textField = textField; 
+	public Queue(int maxSize, Counter counter) { 
 		this.maxSize = maxSize;
 		this.queue = new ArrayBlockingQueue<>(maxSize);
+		this.counter = counter;
 	}
 
 	@Override
 	public void onOut(Visitor vis) { }
 
+	// метод події "Прибуття"
 	@Override
 	public void onIn(Visitor vis) {
-		synchronized (this) {
-			if(this.queue.size() < maxSize)
+		synchronized (this) { // черга є спільновикористовуваними даними
+			// якщо черга не переповнена
+			if(this.queue.size() < maxSize) {
+				// додаємо відвідувача і повідомляємо усіх слухачів
 				this.addToQueue(vis);
-			this.notify();
-			return;
+				this.notify();
+				return;
+			}
 		}
 	}
 
 	@Override
-	public Component getComponent() { return textField; }
+	public Component getComponent() { return counter.textField; }
 	
 	public void addToQueue(Visitor vis) {
 		this.queue.add(vis);
-		textField.setText(String.valueOf(Integer.parseInt(textField.getText())+1));
+		counter.setCount(counter.getCount()+1);
 	}
 	
 	public Visitor deleteFromQueue() {
 		Visitor visitor = this.queue.remove();
-		textField.setText(String.valueOf(Integer.parseInt(textField.getText())-1));
+		counter.setCount(counter.getCount()-1);
 		return visitor;
 	}
 	

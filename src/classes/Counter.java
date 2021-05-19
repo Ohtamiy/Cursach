@@ -6,8 +6,6 @@ import javax.swing.JTextField;
 
 import service.IFromTo;
 
-// счетчики для всякого - разного
-
 public class Counter implements IFromTo {
 	
 	public JTextField textField;
@@ -15,14 +13,14 @@ public class Counter implements IFromTo {
 	
 	public Counter(JTextField textField) { 
 		this.textField = textField; 
-		this.count = Integer.parseInt(textField.getText());
+		this.count = 0;
 	}
 
 	@Override
 	public void onOut(Visitor vis) { }
 
 	@Override
-	public void onIn(Visitor vis) {  textField.setText(String.valueOf(++count)); }
+	public void onIn(Visitor vis) { textField.setText(String.valueOf(++count)); }
 
 	@Override
 	public Component getComponent() { return null; }
@@ -31,8 +29,9 @@ public class Counter implements IFromTo {
 		this.count = count;
 		textField.setText(String.valueOf(count)); 
 	}
+	
 	public int getCount() { 
-		this.count = Integer.parseInt(textField.getText()); 
+		this.count = Integer.parseInt(textField.getText());
 		return count;
 	}
 }

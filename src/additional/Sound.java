@@ -16,15 +16,21 @@ public class Sound {
 	private FloatControl volumeControl;
 	private JSlider volume;
 	
+	/* конструктор класу, в якості параметрів приймає абсолютний 
+	 * шлях до музичного файлу і повзунок регулятора гучності */
 	public Sound(String musicLocation, JSlider volume) {
 		this.musicLocation = musicLocation;
 		this.volume = volume;
 		try {
+			// отримуємо посилання на музичний файл
 			URL url = this.getClass().getResource(this.musicLocation);
 			if (url != null) {
+				// аудіопотік
 				AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
+				// музичний кліп
 				clip = AudioSystem.getClip();
 				clip.open(audioInputStream);
+				// регулятор гучності
 				volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 			} else {
 				JOptionPane.showMessageDialog(null, "Can't find music file", "ERROR WITH SONG", 
@@ -42,7 +48,7 @@ public class Sound {
 	}
 	
 	public void setVolume() {
-		volumeControl.setValue(volumeControl.getMinimum() - volume.getValue()*(-15));
+		volumeControl.setValue(volumeControl.getMinimum() - volume.getValue()*(-12));
 	}
 	
 	public void loopMusic() {
