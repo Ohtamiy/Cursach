@@ -39,37 +39,39 @@ import java.awt.Color;
 import java.awt.Font;
 
 public class MainGui extends JFrame {
+	
+	private About about;
 
 	public JPanel contentPane;
 	
-	public JTextField text_fieldQueueCashbox;
-	public JTextField text_fieldServed;
-	public JTextField text_fieldLost;
-	public JTextField text_fieldqueueArmor;
-	public JTextField text_fieldqueueWeapon;
-	public JTextField text_fieldqueuePotion;
-	public JTextField text_fieldServedPotion;
-	public JTextField text_fieldServedWeapon;
-	public JTextField text_fieldServedArmor;
+	private JTextField text_fieldQueueCashbox;
+	private JTextField text_fieldServed;
+	private JTextField text_fieldLost;
+	private JTextField text_fieldqueueArmor;
+	private JTextField text_fieldqueueWeapon;
+	private JTextField text_fieldqueuePotion;
+	private JTextField text_fieldServedPotion;
+	private JTextField text_fieldServedWeapon;
+	private JTextField text_fieldServedArmor;
 	
-	public boolean end = true;
+	private boolean end = true;
 	
-	public JSlider sliderArrival;
-	public JSlider sliderPotionChoice;
-	public JSlider sliderWeaponChoice;
-	public JSlider sliderArmorChoice;
-	public JSlider sliderVolume;
+	private JSlider sliderArrival;
+	private JSlider sliderPotionChoice;
+	private JSlider sliderWeaponChoice;
+	private JSlider sliderArmorChoice;
+	private JSlider sliderVolume;
 	
-	public JButton startBtn;
-	public JButton endBtn;
+	private JButton startBtn;
+	private JButton endBtn;
 		
-	public JLabel labelRoute;
-	public JLabel labelCashbox;
-	public JLabel labelPotion;
-	public JLabel labelWeapon;
-	public JLabel labelArmor;
-	public JLabel labelEnter;
-	public JLabel labelExit;
+	private JLabel labelRoute;
+	private JLabel labelCashbox;
+	private JLabel labelPotion;
+	private JLabel labelWeapon;
+	private JLabel labelArmor;
+	private JLabel labelEnter;
+	private JLabel labelExit;
 	
 	public Counter cqueueArmor;
 	public Counter cqueueWeapon;
@@ -92,18 +94,18 @@ public class MainGui extends JFrame {
 	public LabelsToGo lLabelExit;
 	public LabelsToGo lLabelRoute;
 	
-	public Thread threadCreator;
-	public Thread threadPotion;
-	public Thread threadWeapon;
-	public Thread threadArmor;
-	public Thread threadCashbox;
-	public Thread threadMusic;
+	private Thread threadCreator;
+	private Thread threadPotion;
+	private Thread threadWeapon;
+	private Thread threadArmor;
+	private Thread threadCashbox;
+	private Thread threadMusic;
 	
-	public Sound soundtrack;
+	private Sound soundtrack;
 	
-	public int maxQueueSize;
+	private int maxQueueSize;
 	
-	public Image img;
+	private Image img;
 	
 	private JLabel lblNewLabel_2_1_2_1_1_3;
 	private JLabel lblNewLabel_2_1_2_1_1;
@@ -132,15 +134,18 @@ public class MainGui extends JFrame {
 		});
 	}
 	
+	public int getMaxQueueSize() { return maxQueueSize; }
+	public boolean getEndState() { return end; }
+	
 	/**
 	 * Create the frame.
 	 * @throws IOException 
 	 */
 	public MainGui() throws IOException {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(MainGui.class.getResource("/pictures/logo.png")));
 		maxQueueSize = 3;
 		img = ImageIO.read(MainGui.class.getResource("/pictures/background.png"));
 		setFont(new Font("Segoe Print", Font.PLAIN, 14));
-		setIconImage(Toolkit.getDefaultToolkit().getImage(MainGui.class.getResource("/pictures/viking.png")));
 		setTitle("Supermarket");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 789, 735);
@@ -221,10 +226,10 @@ public class MainGui extends JFrame {
 		sliderArrival.setFont(new Font("Segoe Print", Font.PLAIN, 16));
 		sliderArrival.setMajorTickSpacing(1);
 		sliderArrival.setPaintLabels(true);
-		sliderArrival.setValue(3);
+		sliderArrival.setValue(5);
 		sliderArrival.setMinorTickSpacing(1);
 		sliderArrival.setPaintTicks(true);
-		sliderArrival.setMinimum(1);
+		sliderArrival.setMinimum(3);
 		sliderArrival.setMaximum(7);
 		sliderArrival.setToolTipText("");
 		sliderArrival.setBounds(268, 88, 200, 52);
@@ -269,12 +274,12 @@ public class MainGui extends JFrame {
 		
 		sliderPotionChoice = new JSlider();
 		sliderPotionChoice.setFont(new Font("Segoe Print", Font.PLAIN, 14));
-		sliderPotionChoice.setValue(3);
+		sliderPotionChoice.setValue(4);
 		sliderPotionChoice.setToolTipText("");
 		sliderPotionChoice.setPaintTicks(true);
 		sliderPotionChoice.setPaintLabels(true);
 		sliderPotionChoice.setMinorTickSpacing(1);
-		sliderPotionChoice.setMinimum(1);
+		sliderPotionChoice.setMinimum(2);
 		sliderPotionChoice.setMaximum(7);
 		sliderPotionChoice.setMajorTickSpacing(1);
 		sliderPotionChoice.setBounds(497, 271, 127, 45);
@@ -287,7 +292,7 @@ public class MainGui extends JFrame {
 		sliderWeaponChoice.setPaintTicks(true);
 		sliderWeaponChoice.setPaintLabels(true);
 		sliderWeaponChoice.setMinorTickSpacing(1);
-		sliderWeaponChoice.setMinimum(1);
+		sliderWeaponChoice.setMinimum(2);
 		sliderWeaponChoice.setMaximum(5);
 		sliderWeaponChoice.setMajorTickSpacing(1);
 		sliderWeaponChoice.setBounds(607, 433, 116, 45);
@@ -301,7 +306,7 @@ public class MainGui extends JFrame {
 		sliderArmorChoice.setPaintTicks(true);
 		sliderArmorChoice.setPaintLabels(true);
 		sliderArmorChoice.setMinorTickSpacing(1);
-		sliderArmorChoice.setMinimum(1);
+		sliderArmorChoice.setMinimum(2);
 		sliderArmorChoice.setMaximum(4);
 		sliderArmorChoice.setMajorTickSpacing(1);
 		sliderArmorChoice.setBounds(400, 564, 116, 45);
@@ -449,7 +454,7 @@ public class MainGui extends JFrame {
 		
 		menuAbout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				About about = new About();
+				about = new About();
 				about.setVisible(true);
 			}
 		});
@@ -483,12 +488,24 @@ public class MainGui extends JFrame {
 				cqueuePotion = new Counter(text_fieldqueuePotion);
 				cQueueCashbox = new Counter(text_fieldQueueCashbox);
 				
+				cqueueArmor.setCount(0);
+				cqueueWeapon.setCount(0);
+				cqueuePotion.setCount(0);
+				cQueueCashbox.setCount(0);
+				
 				cArmorServed = new Counter(text_fieldServedArmor);
 				cWeaponServed = new Counter(text_fieldServedWeapon);
 				cPotionServed = new Counter(text_fieldServedPotion);
 				cCashboxServed = new Counter(text_fieldServed);
 				
+				cArmorServed.setCount(0);
+				cWeaponServed.setCount(0);
+				cPotionServed.setCount(0);
+				cCashboxServed.setCount(0);
+				
 				cLost = new Counter(text_fieldLost);
+				
+				cLost.setCount(0);
 				
 				queueArmor = new Queue(maxQueueSize,cqueueArmor);
 				queueWeapon= new Queue(maxQueueSize,cqueueWeapon);
@@ -501,13 +518,13 @@ public class MainGui extends JFrame {
 				
 				Creator creator = new Creator(MainGui.this, sliderArrival, labelEnter);
 				Armor armor = new Armor(MainGui.this, labelArmor, queueArmor, sliderArmorChoice, 
-						maxQueueSize, 3, cqueueArmor, cArmorServed);
+						maxQueueSize, cqueueArmor, cArmorServed);
 				Weapon weapon = new Weapon(MainGui.this, labelWeapon, queueWeapon, sliderWeaponChoice, 
-						maxQueueSize, 3, cqueueWeapon, cWeaponServed);
+						maxQueueSize, cqueueWeapon, cWeaponServed);
 				Potion potion = new Potion(MainGui.this, labelPotion, queuePotion, sliderPotionChoice, 
-						maxQueueSize, 3, cqueuePotion, cPotionServed);
+						maxQueueSize, cqueuePotion, cPotionServed);
 				Cashbox cashbox = new Cashbox(MainGui.this, labelCashbox, queueCashbox, sliderArrival,
-								maxQueueSize, 3, cQueueCashbox, cCashboxServed);
+								maxQueueSize, cQueueCashbox, cCashboxServed);
 				
 				threadCashbox = new Thread(cashbox);
 				threadPotion = new Thread(potion);
@@ -530,10 +547,10 @@ public class MainGui extends JFrame {
 				soundtrack.stopMusic();			
 				try {
 					threadCreator.join();
-					threadPotion.join();
-					threadWeapon.join();
-					threadArmor.join();
-					threadCashbox.join();
+					threadPotion.interrupt();
+					threadWeapon.interrupt();
+					threadArmor.interrupt();
+					threadCashbox.interrupt();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

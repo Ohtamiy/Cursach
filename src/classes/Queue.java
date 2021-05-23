@@ -9,8 +9,8 @@ import service.IFromTo;
 public class Queue implements IFromTo{
 
 	private BlockingQueue<Visitor> queue;
-	public int maxSize;
-	public Counter counter;
+	private int maxSize;
+	private Counter counter;
 	
 	public Queue(int maxSize, Counter counter) { 
 		this.maxSize = maxSize;
@@ -36,7 +36,7 @@ public class Queue implements IFromTo{
 	}
 
 	@Override
-	public Component getComponent() { return counter.textField; }
+	public Component getComponent() { return counter.getComponent(); }
 	
 	public void addToQueue(Visitor vis) {
 		this.queue.add(vis);

@@ -8,7 +8,7 @@ import service.IFromTo;
 
 public class Counter implements IFromTo {
 	
-	public JTextField textField;
+	private JTextField textField;
 	private int count;
 	
 	public Counter(JTextField textField) { 
@@ -23,7 +23,7 @@ public class Counter implements IFromTo {
 	public void onIn(Visitor vis) { textField.setText(String.valueOf(++count)); }
 
 	@Override
-	public Component getComponent() { return null; }
+	public Component getComponent() { return textField; }
 
 	public void setCount(int count) { 
 		this.count = count;

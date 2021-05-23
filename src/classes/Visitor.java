@@ -1,6 +1,5 @@
 package classes;
 
-
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -18,13 +17,14 @@ import service.IFromTo;
 
 public class Visitor implements Runnable {
 
-	public MainGui gui;
-	public Creator creator;
-	public int maxQueueSize;
-	public Vector<Integer> productsToBuy;
-	public JLabel label;
-	public int products;
-	public String[] pcts;
+	private MainGui gui;
+	private Creator creator;
+	private int maxQueueSize;
+	private Vector<Integer> productsToBuy;
+	private JLabel label;
+	private int products;
+	private String[] pcts;
+	private int step = 4;
 	
 	public Visitor(MainGui gui, Creator creator, int maxQueueSize, Vector<Integer> productsToBuy) {
 		this.gui = gui;
@@ -56,7 +56,7 @@ public class Visitor implements Runnable {
 				// розрахунок середньої довжини зображення  відвідувача           
 				int lenT = (Visitor.this.label.getWidth() + Visitor.this.label.getHeight()) / 2;
 				// розрахунок числа кроків переміщення
-				int n = len / lenT + 2;
+				int n = len / lenT + step;
 				// розрахунок кроків переміщення           
 				int dx = lenX / n;
 				int dy = lenY / n;
@@ -109,6 +109,12 @@ public class Visitor implements Runnable {
 		img = op.filter((BufferedImage)img, null);
 		return img;	
 	}
+	
+	public Vector<Integer> getProductsToBuy(){ return productsToBuy; }
+	public void clearProductsToBuy() { productsToBuy.clear(); }
+	
+	public int getCountOfProducts() { return products; }
+	public void setCountOfProducts() { products = products-1; }
 
 	/* Метод імітації дій відвідувача
 	 * З'являється у випадковий період часу
@@ -122,7 +128,7 @@ public class Visitor implements Runnable {
 			// початок руху від входу до вказівника
 			this.moveFromTo(this.creator, this.gui.lLabelRoute).join();
 			// якщо відвідувач передумав
-			if(this.productsToBuy.elementAt(0) == 0) {
+			if(this.productsToBuy.isEmpty() || this.productsToBuy.elementAt(0) == 0) {
 				// йде до виходу
 				this.moveFromTo(this.gui.lLabelRoute, this.gui.lLabelExit).join();
 				this.gui.cLost.setCount(this.gui.cLost.getCount()+1);
@@ -131,7 +137,7 @@ public class Visitor implements Runnable {
 				int count = 0;
 				int currentsize = this.productsToBuy.size();
 				// поки не вибрав увесь запланований товар
-				while (currentsize != 0) {
+				while (currentsize > 0) {
 					int i = this.productsToBuy.get(count);
 					// товар обираються у певній послідовності
 					switch(i) {
@@ -161,6 +167,7 @@ public class Visitor implements Runnable {
 								while(this.products == currentsize) {
 									this.wait(); }}
 							currentsize--;
+							count++;
 							this.moveFromTo(this.gui.queueWeapon, this.gui.lLabelRoute).join();
 						}
 						else {
@@ -176,6 +183,7 @@ public class Visitor implements Runnable {
 								while(this.products == currentsize) {
 									this.wait(); }}
 							currentsize--;
+							count++;
 							this.moveFromTo(this.gui.queuePotion, this.gui.lLabelRoute).join();
 						}
 						else {

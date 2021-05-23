@@ -8,7 +8,7 @@ import service.IFromTo;
 
 public class LabelsToGo implements IFromTo {
 	
-	public JLabel label;
+	private JLabel label;
 	
 	public LabelsToGo(JLabel label) { this.label = label; }
 
